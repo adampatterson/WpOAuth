@@ -1,0 +1,39 @@
+{
+  "name": "adampatterson/wpoauth",
+  "description": "",
+  "keywords": [
+    "http",
+    "guzzle",
+    "request",
+    "auth",
+    "oauth",
+    "wordpress"
+  ],
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Adam Patterson",
+      "email": "hello@adampatterson.ca"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/adampatterson/wpoauth/issues",
+    "source": "https://github.com/adampatterson/wpoauth"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "require": {
+    "adampatterson/request": "dev-main",
+    "adampatterson/http": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "wpOAuth\\": "src/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  }
+}
