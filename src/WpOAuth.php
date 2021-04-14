@@ -68,9 +68,6 @@ class WpOAuth
             'client_secret' => $this->clientSecret,
             'grant_type'    => 'refresh_token',
         ];
-
-        // Handle the reauthntication at this point.
-        $this->authOrNot();
     }
 
     /*
