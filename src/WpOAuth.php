@@ -89,7 +89,7 @@ class WpOAuth
             } else {
                 // Client needs to reauthenticate the app 💥
                 if (current_user_can('administrator')) {
-                    echo "<a href='{$this->makeAuthUrl()}'>Authorize</a>";
+                    $this->makeAuthLink();
                     $this->postToken();
                 }
             }
@@ -132,10 +132,15 @@ class WpOAuth
         return get_transient($this->makePrefix('token'));
     }
 
+    public function makeAuthLink()
+    {
+        echo "<a href='{$this->getAuthUrl()}'>Authorize</a>";
+    }
+
     /*
      * Redirect to the authorization URL.
      */
-    public function makeAuthUrl()
+    public function getAuthUrl()
     {
         return $this->authUrl.'?'.http_build_query($this->authParams);
     }
