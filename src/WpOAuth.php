@@ -1,10 +1,9 @@
 <?php
 
-namespace WpOAuth;
+namespace RecruitmentPartner;
 
 class WpOAuth
 {
-
     /**
      * @var string
      */
@@ -109,6 +108,17 @@ class WpOAuth
             YEAR_IN_SECONDS - 1);
     }
 
+    public function isAuthenticating()
+    {
+        $code = Request::get('code', false);
+
+        if ( ! $code) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function isTokenExpured()
     {
         return ! get_transient($this->makePrefix('token'));
@@ -131,7 +141,9 @@ class WpOAuth
 
     public function makeAuthLink()
     {
-        echo "<a href='{$this->getAuthUrl()}'>Authorize</a>";
+        if ( ! $this->isAuthenticating()) {
+            echo "<a href='{$this->getAuthUrl()}'>Authorize</a>";
+        }
     }
 
     /*
@@ -157,6 +169,8 @@ class WpOAuth
             array_merge(['code' => $code], $this->tokenParams))->json();
 
         $this->setTokens($response);
+
+        $this->redirectTo($this->clientRedirect);
     }
 
     /*
@@ -168,5 +182,11 @@ class WpOAuth
             array_merge(['refresh_token' => $this->getRefreshToken()], $this->refreshParams))->json();
 
         $this->setTokens($response);
+    }
+
+    public function redirectTo($url)
+    {
+        header('Location: '.$url);
+        exit;
     }
 }
