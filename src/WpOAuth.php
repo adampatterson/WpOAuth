@@ -1,6 +1,6 @@
 <?php
 
-namespace RecruitmentPartner;
+namespace PluginNameSpace;
 
 class WpOAuth
 {
