@@ -4,6 +4,7 @@ namespace WpOAuth;
 
 class WpOAuth
 {
+
     /**
      * @var string
      */
@@ -33,6 +34,21 @@ class WpOAuth
         "transient_prefix"
     ];
 
+    /*
+     $wpOAuthParams = [
+        "authUrl"          => "https://auth.com/connect/authorize",
+        "tokenUrl"         => "https://auth.com/connect/token",
+        "clientRedirect"   => "https://site.com/?callback=wpoauth",
+        "clientId"         => "",
+        "clientSecret"     => "",
+        "scope"            => "read offline_access",
+        "response_type"    => "code",
+        "expires_in"       => HOUR_IN_SECONDS,
+        "transient_prefix" => 'changeme'
+    ];
+
+    $this->wpOAuth = new WpOAuth($wpOAuthParams);
+     */
     public function __construct($settings = [])
     {
         // Should validatet to make sure that all keys are used.
@@ -85,7 +101,7 @@ class WpOAuth
             } else {
                 // Client needs to reauthenticate the app 💥
                 if (current_user_can('administrator')) {
-                    $this->makeAuthLink();
+//                    $this->makeAuthLink();
                     $this->postToken();
                 }
             }
