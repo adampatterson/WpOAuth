@@ -121,7 +121,7 @@ class WpOAuth
     {
         $this->token        = set_transient($this->makePrefix('token'), $response['access_token'], $this->expiresIn);
         $this->refreshToken = set_transient($this->makePrefix('refreshtoken'), $response['refresh_token'],
-            YEAR_IN_SECONDS - 1);
+            $this->expiresIn - 1);
     }
 
     public function isAuthenticating()
