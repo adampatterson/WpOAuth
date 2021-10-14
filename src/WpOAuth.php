@@ -16,6 +16,7 @@ class WpOAuth
     private $token;
     private $refreshToken;
     private $expiresIn;
+    private $refreshExpiresIn;
     private $authParams;
     private $tokenParams;
     private $refreshParams;
