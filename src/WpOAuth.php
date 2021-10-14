@@ -35,16 +35,17 @@ class WpOAuth
     ];
 
     /*
-     $wpOAuthParams = [
-        "authUrl"          => "https://auth.com/connect/authorize",
-        "tokenUrl"         => "https://auth.com/connect/token",
-        "clientRedirect"   => "https://site.com/?callback=wpoauth",
-        "clientId"         => "",
-        "clientSecret"     => "",
-        "scope"            => "read offline_access",
-        "response_type"    => "code",
-        "expires_in"       => HOUR_IN_SECONDS,
-        "transient_prefix" => 'changeme'
+    $wpOAuthParams = [
+        "authUrl"            => "https://auth.com/connect/authorize",
+        "tokenUrl"           => "https://auth.com/connect/token",
+        "clientRedirect"     => "https://site.com/?callback=wpoauth",
+        "clientId"           => "",
+        "clientSecret"       => "",
+        "scope"              => "read offline_access",
+        "response_type"      => "code",
+        "expires_in"         => HOUR_IN_SECONDS,
+        "refresh_expires_in" => WEEK_IN_SECONDS * 2,
+        "transient_prefix"   => 'changeme'
     ];
 
     $this->wpOAuth = new WpOAuth($wpOAuthParams);
@@ -52,16 +53,17 @@ class WpOAuth
     public function __construct($settings = [])
     {
         // Should validatet to make sure that all keys are used.
-        $this->authUrl         = $settings["authUrl"];
-        $this->tokenUrl        = $settings["tokenUrl"];
-        $this->clientRedirect  = $settings["clientRedirect"];
-        $this->clientId        = $settings["clientId"];
-        $this->clientSecret    = $settings["clientSecret"];
-        $this->scope           = $settings["scope"];
-        $this->responseType    = $settings["response_type"];
-        $this->transientPrefix = $settings["transient_prefix"];
-
-        $this->expiresIn = $settings["expires_in"];
+        $this->authUrl          = $settings["authUrl"];
+        $this->tokenUrl         = $settings["tokenUrl"];
+        $this->clientRedirect   = $settings["clientRedirect"];
+        $this->clientId         = $settings["clientId"];
+        $this->clientSecret     = $settings["clientSecret"];
+        $this->scope            = $settings["scope"];
+        $this->responseType     = $settings["response_type"];
+        $this->transientPrefix  = $settings["transient_prefix"];
+        
+        $this->expiresIn        = $settings["expires_in"];
+        $this->refreshExpiresIn = $settings["refresh_expires_in"];
 
         // offline_access is required for refresh tokens.
         $this->authParams = [
@@ -121,7 +123,7 @@ class WpOAuth
     {
         $this->token        = set_transient($this->makePrefix('token'), $response['access_token'], $this->expiresIn);
         $this->refreshToken = set_transient($this->makePrefix('refreshtoken'), $response['refresh_token'],
-            $this->expiresIn - 1);
+            $this->refreshExpiresIn);
     }
 
     public function isAuthenticating()
