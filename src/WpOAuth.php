@@ -23,6 +23,7 @@ class WpOAuth
     private $responseType;
     private $scope;
     private $transientPrefix;
+    private $shouldLog;
 
     private $requiredSettings = [
         "authUrl",
@@ -65,6 +66,9 @@ class WpOAuth
         
         $this->expiresIn        = $settings["expires_in"];
         $this->refreshExpiresIn = $settings["refresh_expires_in"];
+        
+        // Optional logging
+        $this->shouldLog = (array_key_exists('should_log', $settings) && (bool) $settings["should_log"]) ? true : false;
 
         // offline_access is required for refresh tokens.
         $this->authParams = [
