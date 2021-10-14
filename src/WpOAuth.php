@@ -212,4 +212,22 @@ class WpOAuth
         header('Location: '.$url);
         exit;
     }
+    
+    /**
+     * Prints to WordPress log file
+     * see https://wordpress.org/support/article/debugging-in-wordpress/
+     * for debugging details.
+     *
+     * @param $message
+     */
+    public function shouldLog($message)
+    {
+        if ($this->shouldLog) {
+            if (is_array($message) || is_object($message)) {
+                error_log(print_r($message, true));
+            } else {
+                error_log($message);
+            }
+        }
+    }
 }
