@@ -24,6 +24,7 @@ class WpOAuth
     private $scope;
     private $transientPrefix;
     private $shouldLog;
+    private $logPath;
 
     private $requiredSettings = [
         "authUrl",
@@ -45,9 +46,11 @@ class WpOAuth
         "clientSecret"       => "",
         "scope"              => "read offline_access",
         "response_type"      => "code",
-        "expires_in"         => HOUR_IN_SECONDS,
-        "refresh_expires_in" => WEEK_IN_SECONDS * 2,
+        "expires_in"         => HOUR_IN_SECONDS - 1,
+        "refresh_expires_in" => (WEEK_IN_SECONDS * 2) - 1,
         "transient_prefix"   => 'changeme'
+        "should_log"         => true,
+        "log_path"           => __DIR__.'/_log.php',
     ];
 
     $this->wpOAuth = new WpOAuth($wpOAuthParams);
@@ -67,9 +70,11 @@ class WpOAuth
         // Token Expiry times
         $this->expiresIn        = $settings["expires_in"];
         $this->refreshExpiresIn = $settings["refresh_expires_in"];
-        
+
         // Optional logging
         $this->shouldLog = (array_key_exists('should_log', $settings) && (bool) $settings["should_log"]) ? true : false;
+        $this->logPath   = (array_key_exists('log_path',
+                $settings) && (bool) $settings["log_path"]) ? $settings["log_path"] : false;
 
         // offline_access is required for refresh tokens.
         $this->authParams = [
@@ -102,13 +107,17 @@ class WpOAuth
         // Are we wrking with a valid token?
         if ($this->isTokenExpured()) {
             // The token has expired, we need to refresh
+            $this->log('The token has expired, we need to refresh');
             // Do we have a refresh token?
             if ($this->hasRefreshToken()) {
                 // Post refresh token 🪃
+                $this->log('Post refresh token');
                 $this->postRefreshToken();
             } else {
                 // Client needs to reauthenticate the app 💥
+                $this->log('Client needs to reauthenticate the app');
                 if (current_user_can('administrator')) {
+                    $this->log('Post Token');
 //                    $this->makeAuthLink();
                     $this->postToken();
                 }
@@ -130,6 +139,8 @@ class WpOAuth
         $this->token        = set_transient($this->makePrefix('token'), $response['access_token'], $this->expiresIn);
         $this->refreshToken = set_transient($this->makePrefix('refreshtoken'), $response['refresh_token'],
             $this->refreshExpiresIn);
+
+        $this->log('Set new tokens', $response);
     }
 
     public function isAuthenticating()
@@ -214,21 +225,59 @@ class WpOAuth
         exit;
     }
     
-    /**
+/**
      * Prints to WordPress log file
-     * see https://wordpress.org/support/article/debugging-in-wordpress/
-     * for debugging details.
      *
      * @param $message
      */
-    public function shouldLog($message)
+    public function log($message, $data = null)
     {
-        if ($this->shouldLog) {
-            if (is_array($message) || is_object($message)) {
-                error_log(print_r($message, true));
-            } else {
-                error_log($message);
-            }
+        if ($this->shouldLog && $this->logPath) {
+            $this->writeLog($message, $data);
         }
+    }
+
+    public function getDebugDetals()
+    {
+        return [
+            'refresh'                    => $this->getRefreshToken(),
+            'refresh_expires_in_seconds' => $this->getExpiryTime($this->makePrefix('refreshtoken')),
+            'token'                      => $this->getToken(),
+            'token_expires_in_seconds'   => $this->getExpiryTime($this->makePrefix('token')),
+        ];
+    }
+
+    public function getExpiryTime($key)
+    {
+        $transient = get_option('_transient_timeout_'.$key, 0);
+
+        return ($transient === 0) ? 'not set' : get_option('_transient_timeout_'.$key, 0) - time();
+    }
+
+    /**
+     * @param $message
+     */
+    public function writeLog($message, $data)
+    {
+        if ( ! file_exists($this->logPath)) {
+            $open  = fopen($this->logPath, "a");
+            $write = fputs($open, "<?php \r\n die; \r\n?>\r\n");
+            fclose($open);
+        }
+
+        $time = date("F jS Y, H:i", time() + 25200);
+
+        $logMessage = "#============================================\r\n";
+        $logMessage .= "# $time\r\n$message\r\n\r\n";
+
+        if (is_array($data)) {
+            $logMessage .= "# Data:\r\n".print_r($data, true)."\r\n";
+        }
+
+        $logMessage .= "# Debug:\r\n".print_r($this->getDebugDetals(), true)."\r\n";
+
+        $open  = fopen($this->logPath, "a");
+        $write = fputs($open, $logMessage);
+        fclose($open);
     }
 }
