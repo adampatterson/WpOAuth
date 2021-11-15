@@ -64,6 +64,7 @@ class WpOAuth
         $this->responseType     = $settings["response_type"];
         $this->transientPrefix  = $settings["transient_prefix"];
         
+        // Token Expiry times
         $this->expiresIn        = $settings["expires_in"];
         $this->refreshExpiresIn = $settings["refresh_expires_in"];
         
