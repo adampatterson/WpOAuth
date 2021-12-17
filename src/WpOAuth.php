@@ -57,7 +57,7 @@ class WpOAuth
      */
     public function __construct($settings = [])
     {
-        // Should validatet to make sure that all keys are used.
+        // Should validate to make sure that all keys are used.
         $this->authUrl          = $settings["authUrl"];
         $this->tokenUrl         = $settings["tokenUrl"];
         $this->clientRedirect   = $settings["clientRedirect"];
@@ -105,7 +105,7 @@ class WpOAuth
     public function authOrNot()
     {
         // Are we wrking with a valid token?
-        if ($this->isTokenExpured()) {
+        if ($this->isTokenExpired()) {
             // The token has expired, we need to refresh
             $this->log('The token has expired, we need to refresh');
             // Do we have a refresh token?
@@ -154,7 +154,7 @@ class WpOAuth
         return true;
     }
 
-    public function isTokenExpured()
+    public function isTokenExpired()
     {
         return ! get_transient($this->makePrefix('token'));
     }
