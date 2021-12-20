@@ -2,6 +2,12 @@
 
 namespace WpOAuth;
 
+/**
+ * Class WpOAuth
+ * @package WpOAuth
+ * @author Adam Patterson <http://github.com/adampatterson>
+ * @link  https://github.com/adampatterson/WpOAuth
+ */
 class WpOAuth
 {
 
@@ -21,6 +27,7 @@ class WpOAuth
     private $tokenParams;
     private $refreshParams;
     private $responseType;
+    public $responseStatus;
     private $scope;
     private $transientPrefix;
     private $shouldLog;
@@ -65,6 +72,8 @@ class WpOAuth
         $this->clientSecret     = $settings["clientSecret"];
         $this->scope            = $settings["scope"];
         $this->responseType     = $settings["response_type"];
+        $this->responseStatus  = null;
+
         $this->transientPrefix  = $settings["transient_prefix"];
         
         // Token Expiry times
@@ -100,7 +109,7 @@ class WpOAuth
 
     /*
      * Handle the authentication flow, If everything is fine then return the tokens.
-     * Otherwise negotiate refresh or reauthentication.
+     * Otherwise negotiate refresh or reauthenticate.
      */
     public function authOrNot()
     {
@@ -124,7 +133,7 @@ class WpOAuth
             }
         }
 
-        // Retrun new tokens.
+        // Return old tokens.
         $this->token        = $this->getToken();
         $this->refreshToken = $this->getRefreshToken();
     }
@@ -141,6 +150,11 @@ class WpOAuth
             $this->refreshExpiresIn);
 
         $this->log('Set new tokens', $response);
+    }
+
+    public function updateRefreshToken()
+    {
+        return $this->expiresIn;
     }
 
     public function isAuthenticating()
@@ -200,10 +214,15 @@ class WpOAuth
             return;
         }
 
-        $response = Http::asFormParams()->post($this->tokenUrl,
-            array_merge(['code' => $code], $this->tokenParams))->json();
+        $postResponse = Http::asFormParams()->post($this->tokenUrl,
+            array_merge(['code' => $code], $this->tokenParams));
+
+        $response             = $postResponse->json();
+        $this->responseStatus = $postResponse->status();
 
         $this->setTokens($response);
+
+        $this->log('Receive an authorization code', $response);
 
         $this->redirectTo($this->clientRedirect);
     }
@@ -213,12 +232,21 @@ class WpOAuth
      */
     public function postRefreshToken()
     {
-        $response = Http::asFormParams()->post($this->tokenUrl,
-            array_merge(['refresh_token' => $this->getRefreshToken()], $this->refreshParams))->json();
+        $postResponse = Http::asFormParams()->post(
+            $this->tokenUrl, array_merge(['refresh_token' => $this->getRefreshToken()], $this->refreshParams)
+        );
+
+        $response             = $postResponse->json();
+        $this->responseStatus = $postResponse->status();
+
+        $this->log('Exchange the authorization code for an access token', $response);
 
         $this->setTokens($response);
     }
 
+    /**
+     * @param $url
+     */
     public function redirectTo($url)
     {
         header('Location: '.$url);
@@ -244,6 +272,7 @@ class WpOAuth
             'refresh_expires_in_seconds' => $this->getExpiryTime($this->makePrefix('refreshtoken')),
             'token'                      => $this->getToken(),
             'token_expires_in_seconds'   => $this->getExpiryTime($this->makePrefix('token')),
+            'response_status'            => $this->responseStatus,
         ];
     }
 
