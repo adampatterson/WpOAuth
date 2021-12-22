@@ -125,11 +125,11 @@ class WpOAuth
             } else {
                 // Client needs to reauthenticate the app 💥
                 $this->log('Client needs to reauthenticate the app');
-                if (current_user_can('administrator')) {
+//                if (current_user_can('administrator')) {
                     $this->log('Post Token');
 //                    $this->makeAuthLink();
                     $this->postToken();
-                }
+//                }
             }
         }
 
@@ -145,11 +145,15 @@ class WpOAuth
 
     public function setTokens($response)
     {
-        $this->token        = set_transient($this->makePrefix('token'), $response['access_token'], $this->expiresIn);
-        $this->refreshToken = set_transient($this->makePrefix('refreshtoken'), $response['refresh_token'],
-            $this->refreshExpiresIn);
-
-        $this->log('Set new tokens', $response);
+        if ($this->responseStatus) {
+            $this->token        = set_transient($this->makePrefix('access_token'), $response['access_token'],
+                $this->expiresIn);
+            $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'],
+                $this->refreshExpiresIn);
+        } else {
+            $this->log('Set Token: Did not return 200 success, re-apply the old Refresh Token if possible.');
+            $this->refreshToken = $this->getRefreshToken();
+        }
     }
 
     public function updateRefreshToken()
@@ -170,7 +174,7 @@ class WpOAuth
 
     public function isTokenExpired()
     {
-        return ! get_transient($this->makePrefix('token'));
+        return ! get_transient($this->makePrefix('access_token'));
     }
 
     public function hasRefreshToken()
@@ -180,12 +184,12 @@ class WpOAuth
 
     public function getRefreshToken()
     {
-        return get_transient($this->makePrefix('refreshtoken'));
+        return get_transient($this->makePrefix('refresh_token'));
     }
 
     public function getToken()
     {
-        return get_transient($this->makePrefix('token'));
+        return get_transient($this->makePrefix('access_token'));
     }
 
     public function makeAuthLink()
@@ -268,11 +272,11 @@ class WpOAuth
     public function getDebugDetals()
     {
         return [
-            'refresh'                    => $this->getRefreshToken(),
-            'refresh_expires_in_seconds' => $this->getExpiryTime($this->makePrefix('refreshtoken')),
-            'token'                      => $this->getToken(),
-            'token_expires_in_seconds'   => $this->getExpiryTime($this->makePrefix('token')),
-            'response_status'            => $this->responseStatus,
+            'refresh'                         => $this->getRefreshToken(),
+            'refresh_expires_in_seconds'      => $this->getExpiryTime($this->makePrefix('refresh_token')),
+            'access_token'                    => $this->getToken(),
+            'access_token_expires_in_seconds' => $this->getExpiryTime($this->makePrefix('access_token')),
+            'response_status'                 => $this->responseStatus,
         ];
     }
 
