@@ -2,6 +2,9 @@
 
 namespace WpOAuth;
 
+use Http\Http;
+use Request\Request;
+
 /**
  * Class WpOAuth
  * @package WpOAuth
@@ -55,7 +58,7 @@ class WpOAuth
         "response_type"      => "code",
         "expires_in"         => HOUR_IN_SECONDS - 1,
         "refresh_expires_in" => (WEEK_IN_SECONDS * 2) - 1,
-        "transient_prefix"   => 'changeme'
+        "transient_prefix"   => 'change_me'
         "should_log"         => true,
         "log_path"           => __DIR__.'/_log.php',
     ];
@@ -151,6 +154,10 @@ class WpOAuth
             $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'],
                 $this->refreshExpiresIn);
         } else {
+            if ($this->responseStatus == 400) {
+                $this->log('Invalid grant or invalid message', $response);
+            }
+
             $this->log('Set Token: Did not return 200 success, re-apply the old Refresh Token if possible.');
             $this->refreshToken = $this->getRefreshToken();
         }
@@ -226,7 +233,7 @@ class WpOAuth
 
         $this->setTokens($response);
 
-        $this->log('Receive an authorization code', $response);
+        $this->log('Received an authorization code', $response);
 
         $this->redirectTo($this->clientRedirect);
     }
@@ -256,8 +263,8 @@ class WpOAuth
         header('Location: '.$url);
         exit;
     }
-    
-/**
+
+    /**
      * Prints to WordPress log file
      *
      * @param $message
