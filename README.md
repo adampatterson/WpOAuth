@@ -1,5 +1,4 @@
 # WordPress oAuth PHP
-![PHP Composer](https://github.com/adampatterson/wpoauth/workflows/PHP%20Composer/badge.svg?branch=main)
 
 A simple oAuth client meant for personal projects
 
