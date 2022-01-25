@@ -6,7 +6,7 @@ This script is still under development.
 
 ## Install from [Packagist](https://packagist.org/packages/adampatterson/wpoauth)
 
-## Basic Usssage
+## Basic Ussage
 
 ```php
 $wpOAuthParams = [
