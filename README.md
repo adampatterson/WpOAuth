@@ -46,4 +46,4 @@ $ which phpunit
 
 Run from the themes root.
 
-` ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth `
+`ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth`
