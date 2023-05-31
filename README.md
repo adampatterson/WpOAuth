@@ -7,6 +7,8 @@ This script is still under development.
 
 ## Install from [Packagist](https://packagist.org/packages/adampatterson/wpoauth)
 
+`composer require adampatterson/wpoauth`
+
 ## Tests
 
 ```
@@ -20,4 +22,6 @@ $ which phpunit
 
 ## Local Dev
 
-`ln -s ~/Sites/personal/_packages/WpOAuth/ ~/Sites/personal/projectName/vendor/adampatterson/WpOAuth`
+Run from the themes root.
+
+` ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth `
