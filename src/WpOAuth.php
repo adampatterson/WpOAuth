@@ -158,7 +158,7 @@ class WpOAuth
             // https://developer.wordpress.org/reference/functions/set_transient/
             $this->token = set_transient($this->makePrefix('access_token'), $response['access_token'], $response['expires_in']);
             // @todo when we don't get a refresh token
-            $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'], $response['refresh_token_expires_in');
+            $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'], $response['refresh_token_expires_in']);
         } else {
             if ($this->responseStatus == 400) {
                 $this->log('Invalid grant or invalid message', $response);
