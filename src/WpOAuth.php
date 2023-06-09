@@ -85,7 +85,9 @@ class WpOAuth
 
         $this->transientPrefix = $settings["transient_prefix"];
 
-        // @todo if the settings contain token expiry then we will use it, so set it here.
+        // Token Expiry times
+        $this->expiresIn = $settings["expires_in"] ?? null;
+        $this->refreshExpiresIn = $settings["refresh_expires_in"] ?? null;
 
         // Optional logging
         $this->shouldLog = (array_key_exists('should_log', $settings) && (bool)$settings["should_log"]) ? true : false;
@@ -154,11 +156,9 @@ class WpOAuth
     public function setTokens($response)
     {
         if ($this->responseStatus == 200) {
-            // @#todo if the token expiry is set by the settings then we will use that over the response values
             // https://developer.wordpress.org/reference/functions/set_transient/
-            $this->token = set_transient($this->makePrefix('access_token'), $response['access_token'], $response['expires_in']);
-            // @todo when we don't get a refresh token
-            $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'], $response['refresh_token_expires_in']);
+            $this->token = set_transient($this->makePrefix('access_token'), $response['access_token'], $this->expiresIn ?? $response['expires_in']);
+            $this->refreshToken = set_transient($this->makePrefix('refresh_token'), $response['refresh_token'], $this->refreshExpiresIn ?? $response['refresh_token_expires_in']);
         } else {
             if ($this->responseStatus == 400) {
                 $this->log('Invalid grant or invalid message', $response);

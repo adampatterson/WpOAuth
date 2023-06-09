@@ -8,7 +8,7 @@ This script is still under development.
 
 ## Install from [Packagist](https://packagist.org/packages/adampatterson/wpoauth)
 
-## Basic Ussage
+## Basic Usage
 
 ```php
 $wpOAuthParams = [
@@ -47,3 +47,5 @@ $ which phpunit
 Run from the themes root.
 
 `ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth`
+
+https://wordpress.org/plugins/transients-manager/
