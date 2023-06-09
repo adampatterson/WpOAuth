@@ -252,15 +252,16 @@ class WpOAuth
                 $params
             );
 
+        $response = $postResponse->json();
+
         // A status of 200 is returned even if a bad verification code is used.
         // It's also possible that the auth API didn't return JSON.
         // parse_str($postResponse->body(), $tokenData);
-        if ($postResponse->json() === null) {
+        if ($response === null) {
             $this->responseStatus = 500;
             return;
         }
 
-        $response = $postResponse->json();
         $this->responseStatus = $postResponse->status();
 
 //        dd($response, $postResponse->body());
@@ -277,11 +278,24 @@ class WpOAuth
      */
     public function postRefreshToken()
     {
-        $postResponse = Http::asFormParams()->post(
-            $this->tokenUrl, array_merge(['refresh_token' => $this->getRefreshToken()], $this->refreshParams)
-        );
+        $postResponse = Http::asFormParams()
+            ->withHeaders([
+                'Accept' => 'application/json'
+            ])
+            ->post(
+                $this->tokenUrl, array_merge(
+                    ['refresh_token' => $this->getRefreshToken()],
+                    $this->refreshParams)
+            );
 
         $response = $postResponse->json();
+
+        if ($response === null) {
+            // @todo Delete the tokens and start fresh
+            $this->responseStatus = 500;
+            return;
+        }
+
         $this->responseStatus = $postResponse->status();
 
         $this->log('Exchange the authorization code for an access token', $response);
