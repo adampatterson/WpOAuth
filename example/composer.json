@@ -1,0 +1,13 @@
+{
+  "require": {
+    "adampatterson/axe-helpers": "^1.0",
+    "adampatterson/wpoauth": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "Example\\": "lib/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
