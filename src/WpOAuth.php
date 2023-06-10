@@ -55,8 +55,8 @@ class WpOAuth
         "authUrl"            => "https://auth.com/connect/authorize",
         "tokenUrl"           => "https://auth.com/connect/token",
         "clientRedirect"     => "https://site.com/?callback=wpoauth",
-        "clientId"           => "",
-        "clientSecret"       => "",
+        "clientId"           => CLIENT_ID,     // Set in your wp-config or store in the DB
+        "clientSecret"       => CLIENT_SECRET, // Set in your wp-config or store in the DB
         "state"              => "random_state_string",
         "scope"              => "read offline_access",
         "response_type"      => "code",
