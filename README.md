@@ -8,6 +8,10 @@ This script is still under development.
 
 ## Install from [Packagist](https://packagist.org/packages/adampatterson/wpoauth)
 
+```bash
+composer require adampatterson/wpoauth
+```
+
 ## Basic Usage
 
 ```php
@@ -28,8 +32,6 @@ $wpOAuthParams = [
 
 $this->wpOAuth = new WpOAuth($wpOAuthParams);
 ```
-
-`composer require adampatterson/wpoauth`
 
 ## Tests
 
