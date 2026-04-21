@@ -33,19 +33,20 @@ $this->wpOAuth = new WpOAuth($wpOAuthParams);
 
 ## Tests
 
-```
-$ composer global require phpunit/phpunit
+```bash
+$ composer install
 $ export PATH=~/.composer/vendor/bin:$PATH
 $ which phpunit
 ~/.composer/vendor/bin/phpunit
+composer run-script test
 ```
-
-`composer run-script test`
 
 ## Local Dev
 
 Run from the themes root.
 
-`ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth`
+```bash
+ln -s ~/Sites/packages/WpOAuth ./vendor/adampatterson/wpoauth
+```
 
-https://wordpress.org/plugins/transients-manager/
+I'd reccomend using the [WordPress Transients Manager](https://wordpress.org/plugins/transients-manager/) plugin so you can monitor, and invalidate the token storage.
