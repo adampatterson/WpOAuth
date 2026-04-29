@@ -48,3 +48,5 @@ Run from the theme root.
 ```bash
 ln -s ~/Sites/packages/WpOAuth ./vendor/adampatterson/wpoauth
 ```
+
+I'd reccomend using the [WordPress Transients Manager](https://wordpress.org/plugins/transients-manager/) plugin so you can monitor, and invalidate the token storage.
