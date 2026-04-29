@@ -4,9 +4,14 @@
 
 A simple oAuth client meant for personal projects
 
-This script is still under development.
+> [!NOTE]
+> This script is still under development.
 
 ## Install from [Packagist](https://packagist.org/packages/adampatterson/wpoauth)
+
+```bash
+composer require adampatterson/wpoauth
+```
 
 ## Basic Usage
 
@@ -29,23 +34,17 @@ $wpOAuthParams = [
 $this->wpOAuth = new WpOAuth($wpOAuthParams);
 ```
 
-`composer require adampatterson/wpoauth`
-
 ## Tests
 
+```bash
+composer install
+composer test
 ```
-$ composer global require phpunit/phpunit
-$ export PATH=~/.composer/vendor/bin:$PATH
-$ which phpunit
-~/.composer/vendor/bin/phpunit
-```
-
-`composer run-script test`
 
 ## Local Dev
 
-Run from the themes root.
+Run from the theme root.
 
-`ln -s ~/Sites/personal/_packages/WpOAuth ./vendor/adampatterson/wpoauth`
-
-https://wordpress.org/plugins/transients-manager/
+```bash
+ln -s ~/Sites/packages/WpOAuth ./vendor/adampatterson/wpoauth
+```
